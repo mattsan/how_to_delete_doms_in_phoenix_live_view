@@ -1,0 +1,7 @@
+<div id="bars" phx-update="append">
+  <%= for bar <- @bars do %>
+    <div id="bar-<%= bar.id %>" data-state="<%= Ecto.get_meta(bar, :state) %>" phx-hook="Bar">
+      <span><%= bar.id %></span>: <span><%= bar.name %></span>
+    </div>
+  <% end %>
+</div>

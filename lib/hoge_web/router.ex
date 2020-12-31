@@ -17,7 +17,7 @@ defmodule HogeWeb.Router do
   scope "/", HogeWeb do
     pipe_through :browser
 
-    live "/", PageLive, :index
+    live "/", BarLive
   end
 
   # Other scopes may use custom stacks.

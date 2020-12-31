@@ -8,6 +8,16 @@ defmodule Hoge.Foos do
 
   alias Hoge.Foos.Bar
 
+  alias Phoenix.PubSub
+
+  def subscribe_bars do
+    PubSub.subscribe(Hoge.PubSub, "bars")
+  end
+
+  def broadcast(message, %Bar{} = bar) do
+    PubSub.broadcast(Hoge.PubSub, "bars", {message, bar})
+  end
+
   @doc """
   Returns the list of bars.
 
@@ -53,6 +63,14 @@ defmodule Hoge.Foos do
     %Bar{}
     |> Bar.changeset(attrs)
     |> Repo.insert()
+    |> case do
+      {:ok, bar} = result ->
+        broadcast(:created, bar)
+        result
+
+      error ->
+        error
+    end
   end
 
   @doc """
@@ -71,6 +89,14 @@ defmodule Hoge.Foos do
     bar
     |> Bar.changeset(attrs)
     |> Repo.update()
+    |> case do
+      {:ok, bar} = result ->
+        broadcast(:updated, bar)
+        result
+
+      error ->
+        error
+    end
   end
 
   @doc """
@@ -87,6 +113,14 @@ defmodule Hoge.Foos do
   """
   def delete_bar(%Bar{} = bar) do
     Repo.delete(bar)
+    |> case do
+      {:ok, bar} = result ->
+        broadcast(:deleted, bar)
+        result
+
+      error ->
+        error
+    end
   end
 
   @doc """
